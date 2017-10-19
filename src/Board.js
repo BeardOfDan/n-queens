@@ -130,7 +130,7 @@
         }
       }
 
-      return false; // fixme
+      return false;
     },
 
 
@@ -162,7 +162,7 @@
         }
 
       }
-      return counter > 1; // fixme
+      return counter > 1;
     },
 
     // test if any major diagonals on this board contain conflicts
@@ -194,7 +194,6 @@
           }
         }
       } else {
-        // short -= n; 
         for (let i = (short - (n - 1)); i < n; i++) {
           if (all[i][short - i] === 1) {
             counter++; 
