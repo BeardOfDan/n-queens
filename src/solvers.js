@@ -13,6 +13,39 @@
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks placed such that none of them can attack each other
 
+var versionB = function(n) {
+  var board = []; 
+  for (var i = 0; i < board.length; i++) {
+    board.push(i);  
+  }
+  var perms = permutations(board);
+  var master = [];
+  for (var i = 0; i < perms.length; i++) {
+    var current = perms[i];
+    if (!hasAnyConflicts(current)) {
+      master.push(current);
+    }
+  }
+  return master; 
+};
+
+var hasAnyConflicts = function(arr) {
+  for (var i = 0; (i + 1) < arr.length; i++) {
+    for (var j = (i + 1); j < arr.length; j++) {
+      if (Math.abs(arr[j] - arr[i]) === (j - i)) {
+        return true; 
+      }
+    }
+  }
+  return false; 
+}; 
+
+console.log(hasAnyConflicts([1, 3, 0, 2]));
+console.log(hasAnyConflicts([0, 3, 1, 2])); 
+
+
+
+
 
 // this is a helper function, it swaps 2 elements, at given indexes, in an array
 window.swap = function(index1, index2, array) {
@@ -47,10 +80,10 @@ window.getFirstCase = function(n) {
 // rooks does not use the validator, but queens need it
 window.permutations = function(n, validator) {
   const results = []; 
-  
+
   const array = getFirstCase(n);
 
-  // if this is for rooks
+// debugger;  // if this is for rooks
   if (validator === undefined) { 
     results.push(array.slice());
   }
@@ -80,6 +113,12 @@ window.permutations = function(n, validator) {
         results.push(current);
       } else { // this is for queens
         if (validator(current)) {
+
+          // alternative 
+          // instead of validating first,
+          // push then use web workers to validate
+            // on every 1000th push to the results array or something
+
           results.push(current);
         }
       }
@@ -122,9 +161,13 @@ window.findNQueensSolution = function(n) {
   var solution = permutations(n, function(board) {
     // this is the validator function
     // board is an array of arrays    
+    // debugger;
+    
+   
 
-    let thisBoard = new Board(board);
-    return thisBoard.hasAnyMajorDiagonalConflicts() && thisBoard.hasAnyMinorDiagonalConflicts;
+
+// let thisBoard = new Board(board);
+    // return thisBoard.hasAnyMajorDiagonalConflicts() && thisBoard.hasAnyMinorDiagonalConflicts();
     // return true;
   });
 
@@ -139,7 +182,7 @@ window.countNQueensSolutions = function(n) {
     // board is an array of arrays    
 
     let thisBoard = new Board(board);
-    return thisBoard.hasAnyMajorDiagonalConflicts() && thisBoard.hasAnyMinorDiagonalConflicts;
+    return thisBoard.hasAnyMajorDiagonalConflicts() && thisBoard.hasAnyMinorDiagonalConflicts();
     // return true;
   }).length;
 
