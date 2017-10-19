@@ -14,6 +14,69 @@
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks placed such that none of them can attack each other
 
 
+// general solver function goes here
+window.swap = function(index1, index2, array) {
+  var swapSpace = array[index1]; 
+  array[index1] = array[index2]; 
+  array[index2] = swapSpace; 
+};
+
+window.getFirstCase = function(n) {
+  let array = [[]]; 
+  for (var i = 0; i < n; i++) {
+    for (var l = 0; l < n; l++) {
+      array[i][l] = 0; 
+    }
+  }
+
+  for (var i = 0; i < n; i++) {
+    array[i][i] = 1; 
+  }
+
+  return array; 
+};
+
+window.permutations = function(n, validator) {
+  var results = []; 
+  
+  let array = getFirstCase(n);
+
+  if (validator === undefined) { 
+    results.push(array.slice());
+  }
+  const n = array.length; 
+  var indices = []; 
+  for (let i = 0; i < n; i++) {
+    indices[i] = 0; 
+  }
+  
+  for (let i = 0; i < n; ) {
+    if (indices[i] < i) {
+      if (i % 2 === 0) {
+        swap((0, i, array));
+      } else {
+        swap(indices[i], i, array); 
+      }
+      var current = array.slice(); 
+
+
+      if (validator === undefined) {
+        results.push(current);
+      } else {
+        if (validator(current)) {
+          results.push(current);
+        }
+      }
+      indices[i] += 1; 
+      i = 0;  
+    } else {
+      indices[i] = 0;
+      i++; 
+    }
+  }
+  return results; 
+};
+
 
 window.findNRooksSolution = function(n) {
   var solution = new Board({'n': n}); 
@@ -41,81 +104,14 @@ const toNumber = function(arr) {
 // return number
 };
 
+
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
-  let ns = n * n; // n Squared
-  let solutionCount = 0;
-  let solutions = []; // solutions.push(toNumber(solution));
-
-  // base case (to work off of)
-  var base = new Board({'n': n}); 
-  
-  for (let i = 0; i < n; i++) {
-    base.togglePiece(i, i);
-  }
-
-  let arr = [];
-
-  // convert s.attributes to an array
-  for (let i = 0; i < n; i++) {
-    arr.push(base.attributes[i]);
-  }
-  
-
-  // use the base case to generate the rest of the possibilities
-  let combos = [];
-
-
-
-
-  return combos.length;
-
-  // // different starting positions
-  // for (let i = 0; i < ns; i++) {
-  //   let row = Math.floor(i / n);
-  //   let column = i % n;
-
-  //   let pushedTo = {};
-  //   // pushedTo.x = [];
-  //   pushedTo.y = [];
-
-  //   // each row
-  //   for (let j = 0; j < n; j++) {
-  //     if (pushedTo.y.indexOf(j) !== -1) {
-  //       // try it
-        
-  //       // if found
-  //       // test against currently stored solutions
-  //       //   if unique, push it to the solutions array
-  //       //    increment solutionsCount        
-  //     } else {
-  //       pushedTo.y.push(j);
-  //       // don't try it
-  //       continue;
-  //     }
-  //     // different rows
-  //     for (let k = 0; k < n; k++) {
-
-  //     }
-      
-  //   }
-
-  //   // validate the current solution
-  //   //   solutionCount++;
-  // }
-
-
-
-  // var solutionCount = n; 
-  // if (n <= 1) {
-  //   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
-  // } else {
-  //   for (let l = (n - 1); l > 0; l--) {
-  //     solutionCount = (solutionCount * l);
-  //   }
-  //   console.log('Number of solutions for ' + n );
-  // }
-  return solutionCount;
+  var first = [];
+  for (var i = 0; i < n; i++) {
+    first.push(i);
+  } 
+   
 };
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
