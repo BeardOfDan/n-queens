@@ -13,6 +13,102 @@
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks placed such that none of them can attack each other
 
+
+
+
+// make a version of permutations that gets a coordinate list of the queens for the board
+// then use the column values with hasAnyConflicts
+
+// make another function to generate a new Board with the values for this coordinate system
+
+// window.getAlpha = function(n) {
+//   let arr = []; // an array of tuples
+//                 // the tuples hold the coordinates
+// }
+
+
+// make a version of permutations that gets an array of the order of the column indices
+// then use the column indices array as an argument for hasAnyConflicts
+// if passes, then add that permutation
+
+window.getAlpha = function(n) {
+  let arr = [];
+
+  for (let i = 0; i < n; i++) {
+    arr.push(i);
+  }
+
+  return arr;
+};
+
+
+// where n % 2 === 0, you only have to go half way through, then double it (due to symmetry)
+
+window.getColumnIndicesArrayPermutations = function(n) {
+
+  const results = []; 
+
+  const array = getAlpha(n);
+
+  // results.push(array.slice()); // ALWAYS FALSE
+  
+  // const n = array.length; 
+  var indices = []; 
+  for (let i = 0; i < n; i++) {
+    indices[i] = 0; 
+  }
+  
+  for (let i = 0; i < n; ) {
+    if (indices[i] < i) {
+      if (i % 2 === 0) {
+        // swap((0, i, array));
+        // it's unclear why, but the above function call does not work properly
+        // the below code functions correctly
+        var swapSpace = array[0]; 
+        array[0] = array[i]; 
+        array[i] = swapSpace; 
+      } else {
+        swap(indices[i], i, array); 
+      }
+      var current = array.slice(); 
+
+
+      if (!hasAnyConflicts(current)) {
+        results.push(current);
+      }
+
+
+      // // if this is for rooks
+      // if (validator === undefined) {
+      //   results.push(current);
+      // } else { // this is for queens
+      //   if (validator(current)) {
+
+      //     // alternative 
+      //     // instead of validating first,
+      //     // push then use web workers to validate
+      //       // on every 1000th push to the results array or something
+
+      //     results.push(current);
+      //   }
+      // }
+      indices[i] += 1; 
+      i = 0;  
+    } else {
+      indices[i] = 0;
+      i++; 
+    }
+  }
+  return results; 
+
+
+};
+
+
+
+
+
+
 var versionB = function(n) {
   var board = []; 
   for (var i = 0; i < board.length; i++) {
@@ -177,15 +273,34 @@ window.findNQueensSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutionCount = permutations(n, function(board) {
-    // this is the validator function
-    // board is an array of arrays    
+  // var solutionCount = permutations(n, function(board) {
+  //   // this is the validator function
+  //   // board is an array of arrays    
 
-    let thisBoard = new Board(board);
-    return thisBoard.hasAnyMajorDiagonalConflicts() && thisBoard.hasAnyMinorDiagonalConflicts();
-    // return true;
-  }).length;
+  //   let thisBoard = new Board(board);
+  //   return thisBoard.hasAnyMajorDiagonalConflicts() && thisBoard.hasAnyMinorDiagonalConflicts();
+  //   // return true;
+  // }).length;
+
+  if (n < 2) {
+    return 1;
+  } else if ((n === 2) || (n === 3)) {
+    return 0;
+  }
+
+  const thing = getColumnIndicesArrayPermutations(n);
+
+  console.log('\n\nN:', n);
+  console.log('\n\n\n');
+  console.log('THE THING');
+  console.log(thing);
+
+  const solutionCount = thing.length;
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
 };
+
+
+
+
