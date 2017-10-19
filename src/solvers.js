@@ -42,17 +42,11 @@ window.getAlpha = function(n) {
 };
 
 
-// where n % 2 === 0, you only have to go half way through, then double it (due to symmetry)
-
+// OPTIMIZATION: where n % 2 === 0, you only have to go half way through, then double it (due to symmetry)
 window.getColumnIndicesArrayPermutations = function(n) {
-
   const results = []; 
-
   const array = getAlpha(n);
 
-  // results.push(array.slice()); // ALWAYS FALSE
-  
-  // const n = array.length; 
   var indices = []; 
   for (let i = 0; i < n; i++) {
     indices[i] = 0; 
@@ -72,26 +66,10 @@ window.getColumnIndicesArrayPermutations = function(n) {
       }
       var current = array.slice(); 
 
-
       if (!hasAnyConflicts(current)) {
         results.push(current);
       }
 
-
-      // // if this is for rooks
-      // if (validator === undefined) {
-      //   results.push(current);
-      // } else { // this is for queens
-      //   if (validator(current)) {
-
-      //     // alternative 
-      //     // instead of validating first,
-      //     // push then use web workers to validate
-      //       // on every 1000th push to the results array or something
-
-      //     results.push(current);
-      //   }
-      // }
       indices[i] += 1; 
       i = 0;  
     } else {
@@ -100,12 +78,45 @@ window.getColumnIndicesArrayPermutations = function(n) {
     }
   }
   return results; 
-
-
 };
 
 
+window.getFirstQueenSolution = function(n) {
+  const array = getAlpha(n);
 
+  var indices = []; 
+  for (let i = 0; i < n; i++) {
+    indices[i] = 0; 
+  }
+  
+  for (let i = 0; i < n; ) {
+    if (indices[i] < i) {
+      if (i % 2 === 0) {
+        // swap((0, i, array));
+        // it's unclear why, but the above function call does not work properly
+        // the below code functions correctly
+        var swapSpace = array[0]; 
+        array[0] = array[i]; 
+        array[i] = swapSpace; 
+      } else {
+        swap(indices[i], i, array); 
+      }
+      var current = array.slice(); 
+
+      if (!hasAnyConflicts(current)) {
+        return current;
+        // results.push(current);
+      }
+
+      indices[i] += 1; 
+      i = 0;  
+    } else {
+      indices[i] = 0;
+      i++; 
+    }
+  }
+  return ['No valid solutions', n]; 
+};
 
 
 
@@ -248,54 +259,40 @@ window.findNQueensSolution = function(n) {
 
   if (n < 1) {
     return [];
+  } else if (n === 1) {
+    return [[1]];
+  } else if (n === 2) {
+    return [[0, 0], [0, 0]]; 
+  } else if (n === 3) {
+    return [[0, 0, 0], [0, 0, 0], [0, 0, 0]]; 
   }
 
-  console.log('Inside of findNQueensSolution');
-  console.log('n:', n);
 
-  // if there is time, replace this, with a method that would only find 1 solution, instead of them all
-  var solution = permutations(n, function(board) {
-    // this is the validator function
-    // board is an array of arrays    
-    // debugger;
+  const singleArray = getFirstQueenSolution(n);
+
+  const matrix = [];
+
+  // generate a matrix from singleArray
+  for (let i = 0; i < n; i++) {
+    const thisRow = (new Array(n)).fill(0);
     
-   
+    thisRow[singleArray[i]] = 1;
 
+    matrix.push(thisRow);
+  }
 
-// let thisBoard = new Board(board);
-    // return thisBoard.hasAnyMajorDiagonalConflicts() && thisBoard.hasAnyMinorDiagonalConflicts();
-    // return true;
-  });
-
-  console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
-  return solution;
+  return matrix;
 };
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  // var solutionCount = permutations(n, function(board) {
-  //   // this is the validator function
-  //   // board is an array of arrays    
-
-  //   let thisBoard = new Board(board);
-  //   return thisBoard.hasAnyMajorDiagonalConflicts() && thisBoard.hasAnyMinorDiagonalConflicts();
-  //   // return true;
-  // }).length;
-
   if (n < 2) {
     return 1;
   } else if ((n === 2) || (n === 3)) {
     return 0;
   }
 
-  const thing = getColumnIndicesArrayPermutations(n);
-
-  console.log('\n\nN:', n);
-  console.log('\n\n\n');
-  console.log('THE THING');
-  console.log(thing);
-
-  const solutionCount = thing.length;
+  const solutionCount = getColumnIndicesArrayPermutations(n).length;
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
