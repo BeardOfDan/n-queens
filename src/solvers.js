@@ -34,12 +34,6 @@ window.getFirstCase = function(n) {
     array.push(row.slice());
   }
 
-  // for (var i = 0; i < n; i++) {
-  //   for (var l = 0; l < n; l++) {
-  //     array[i][l] = 0; 
-  //   }
-  // }
-
   // set a base case pattern where pieces are placed
   for (let i = 0; i < n; i++) {
     array[i][i] = 1; 
@@ -116,7 +110,23 @@ window.countNRooksSolutions = function(n) {
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  var solution = undefined; //fixme
+
+  if (n < 1) {
+    return [];
+  }
+
+  console.log('Inside of findNQueensSolution');
+  console.log('n:', n);
+
+  // if there is time, replace this, with a method that would only find 1 solution, instead of them all
+  var solution = permutations(n, function(board) {
+    // this is the validator function
+    // board is an array of arrays    
+
+    let thisBoard = new Board(board);
+    return thisBoard.hasAnyMajorDiagonalConflicts() && thisBoard.hasAnyMinorDiagonalConflicts;
+    // return true;
+  });
 
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
   return solution;
@@ -124,7 +134,14 @@ window.findNQueensSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+  var solutionCount = permutations(n, function(board) {
+    // this is the validator function
+    // board is an array of arrays    
+
+    let thisBoard = new Board(board);
+    return thisBoard.hasAnyMajorDiagonalConflicts() && thisBoard.hasAnyMinorDiagonalConflicts;
+    // return true;
+  }).length;
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
